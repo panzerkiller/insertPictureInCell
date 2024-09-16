@@ -21,7 +21,7 @@ def insert_picture_into_excel(input_workbook_path, output_workbook_path, image_p
     wb = xw.Book(input_workbook_path)
     
     # Run the VBA macro
-    macro = wb.macro('InsertImagesBasedOnSKU')  # Load the VBA macro
+    macro = wb.macro('Sheet1.InsertImagesBasedOnSKU')  # Load the VBA macro
     print(image_path)
     #print the macro
     print(macro)
@@ -126,7 +126,7 @@ def fill_cell_with_hello_world(workbook_path):
     wb = xw.Book(workbook_path)
     
     # Load the macro
-    macro = wb.macro('FillCellWithHelloWorld')
+    macro = wb.macro('Sheet1.FillCellWithHelloWorld')
     
     # Run the macro
     print(f"Running macro: {macro}")
@@ -141,21 +141,21 @@ def fill_cell_with_hello_world(workbook_path):
 
 if __name__ == "__main__":
     # #vba_file_path = 'vba/insert_images_macro.vba'  # Replace with the path to your .vba file
-    # output_xlsm_path = 'template_workbook.xlsm'    # Replace with the desired output file path
+    workbook_path = 'template_workbook.xlsm'    # Replace with the desired output file path
     
     # #create_xlsm_with_vba_macro(vba_file_path, 'test_images', output_xlsm_path)
 
-    # add_sku_to_xlsm(output_xlsm_path, 'test_images', 'Images')    
+    add_sku_to_xlsm(workbook_path, 'test_images', 'Images')    
     # # input_workbook_path = 'demo.xlsm'  # Replace with the actual path to your .xlsm file
-    # output_workbook_path = 'demo.xlsx'       # Replace with the desired output file path
-    # image_path = '/Users/haoli/repo/insertPictureInCell/test_images'               # Replace with the actual path to your image
+    output_workbook_path = 'demo.xlsx'       # Replace with the desired output file path
+    image_path = '/Users/haoli/repo/insertPictureInCell/test_images'               # Replace with the actual path to your image
     # # cell_address = 'B2'                                 # Replace with the desired cell address
 
     # # # Insert picture into Excel and save as a new file
-    # insert_picture_into_excel(output_xlsm_path, output_workbook_path, image_path)
+    insert_picture_into_excel(workbook_path, output_workbook_path, image_path)
 
 
-    workbook_path = 'template_workbook.xlsm'  # Replace with your actual .xlsm file path
+    # workbook_path = 'template_workbook.xlsm'  # Replace with your actual .xlsm file path
     #macro_name = 'InsertImagesBasedOnSKU'  # Replace with your actual macro name
     
     # Open the workbook
@@ -171,5 +171,5 @@ if __name__ == "__main__":
 
     #insert_folder_path(folder_path, cell_address, workbook_path)
 
-    fill_cell_with_hello_world(workbook_path)
+    #fill_cell_with_hello_world(workbook_path)
     
