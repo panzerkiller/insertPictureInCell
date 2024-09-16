@@ -1,3 +1,4 @@
+import os
 import xlwings as xw
 
 def insert_picture_into_excel2(input_workbook_path, output_workbook_path, image_path, cell_address):
@@ -27,10 +28,15 @@ def insert_picture_into_excel(input_workbook_path, output_workbook_path, image_p
     wb.save(output_workbook_path)
     wb.close()
 
-def create_xlsm_with_vba_macro(vba_file_path, output_xlsm_path):
+def create_xlsm_with_vba_macro(vba_file_path, image_folder, output_xlsm_path):
+    # Start an instance of Excel and hide the window
+    app = xw.App(visible=False)
     # Create a new Excel workbook
     wb = xw.Book()
     
+    #rename the sheet name to 'Images'
+    wb.sheets[0].name = 'Images'
+
     # Save it as an .xlsm file to enable macros
     wb.save(output_xlsm_path)
 
@@ -38,8 +44,10 @@ def create_xlsm_with_vba_macro(vba_file_path, output_xlsm_path):
     with open(vba_file_path, 'r') as vba_file:
         vba_code = vba_file.read()
     
+    # Replace the <image_folder> placeholder with the actual image folder path
+    vba_code = vba_code.replace('<image_folder>', image_folder)
     #printout the vba code
-    print(vba_code)
+    #print(vba_code)
 
     # Embed the VBA macro into the workbook
     wb.api.VBProject.VBComponents.Add(1).CodeModule.AddFromString(vba_code)
@@ -47,12 +55,48 @@ def create_xlsm_with_vba_macro(vba_file_path, output_xlsm_path):
     # Save the workbook with the embedded macro
     wb.save()
     wb.close()
+    # Quit the Excel application
+    app.quit()
+
+def add_sku_to_xlsm(xlsm_file_path, png_folder_path, sheet_name='Sheet1'):
+    # Start an instance of Excel and hide the window
+    app = xw.App(visible=False)
+
+    # Open the existing Excel workbook
+    wb = xw.Book(xlsm_file_path)
+    
+    # Access the specified sheet (or use the default sheet name)
+    sheet = wb.sheets[sheet_name]
+    
+    # Start adding file names from the second row (first row for headers)
+    start_row = 2
+    
+    # Set the header for the first column
+    sheet.range('A1').value = 'SKU'
+    
+    # Iterate through the PNG files in the specified folder
+    for i, file_name in enumerate(os.listdir(png_folder_path)):
+        if file_name.endswith('.png'):
+            # Remove the file extension to get the SKU
+            sku = os.path.splitext(file_name)[0]
+            
+            # Write the SKU into the corresponding cell in the first column
+            sheet.range(f'A{start_row + i}').value = sku
+    
+    # Save the workbook and close it
+    wb.save()
+    wb.close()
+
+    # Quit the Excel application
+    app.quit()
 
 if __name__ == "__main__":
     vba_file_path = 'vba/insert_images_macro.vba'  # Replace with the path to your .vba file
     output_xlsm_path = 'template_workbook.xlsm'    # Replace with the desired output file path
+    
+    create_xlsm_with_vba_macro(vba_file_path, 'test_images', output_xlsm_path)
 
-    create_xlsm_with_vba_macro(vba_file_path, output_xlsm_path)
+    add_sku_to_xlsm(output_xlsm_path, 'test_images', 'Images')    
     # input_workbook_path = 'demo.xlsm'  # Replace with the actual path to your .xlsm file
     # output_workbook_path = 'demo.xlsx'       # Replace with the desired output file path
     # image_path = 'test_images/1001.png'               # Replace with the actual path to your image
